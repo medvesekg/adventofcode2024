@@ -120,3 +120,11 @@ func ArrayCountOccurances[T comparable](arr []T) map[T]int {
 	}
 	return counts
 }
+
+func ArraySum(array []int) int {
+	sum := 0
+	for _, num := range array {
+		sum += num
+	}
+	return sum
+}
