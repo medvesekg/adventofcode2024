@@ -136,3 +136,28 @@ func ArraySum(array []int) int {
 func IndexValid[T any](array []T, i int) bool {
 	return i >= 0 && i < len(array)
 }
+
+func CheckBounds[T any](y int, x int, grid [][]T) bool {
+	return IndexValid(grid, y) && IndexValid(grid[y], x)
+}
+
+func PrintGrid(grid [][]string) {
+	for _, row := range grid {
+		for _, cell := range row {
+			print(cell)
+		}
+		println()
+	}
+}
+
+func ArrayUnique[T comparable](array []T) []T {
+	seen := map[T]bool{}
+	unique := []T{}
+	for _, val := range array {
+		if !seen[val] {
+			unique = append(unique, val)
+		}
+		seen[val] = true
+	}
+	return unique
+}
