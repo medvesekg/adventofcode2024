@@ -80,6 +80,10 @@ func StrToInt(str string) int {
 	return num
 }
 
+func Identity[T any](item T) T {
+	return item
+}
+
 func ReadFileLines(path string) []string {
 	data := ReadFile(path)
 	lines := SplitByLine(data)
@@ -127,4 +131,8 @@ func ArraySum(array []int) int {
 		sum += num
 	}
 	return sum
+}
+
+func IndexValid[T any](array []T, i int) bool {
+	return i >= 0 && i < len(array)
 }

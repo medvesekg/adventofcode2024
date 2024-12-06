@@ -123,6 +123,5 @@ func checkDirection(rows [][]string, y int, x int, pattern []string, direction [
 }
 
 func checkBounds[T any](y int, x int, grid [][]T) bool {
-	return y >= 0 && y < len(grid) && x >= 0 && x < len(grid[y])
-
+	return utils.IndexValid(grid, y) && utils.IndexValid(grid[y], x)
 }
