@@ -80,6 +80,10 @@ func StrToInt(str string) int {
 	return num
 }
 
+func IntToStr(num int) string {
+	return strconv.FormatInt(int64(num), 10)
+}
+
 func Identity[T any](item T) T {
 	return item
 }
@@ -160,4 +164,13 @@ func ArrayUnique[T comparable](array []T) []T {
 		seen[val] = true
 	}
 	return unique
+}
+
+func ArrayAny[T any](array []T, fn func(T) bool) bool {
+	for _, value := range array {
+		if fn(value) {
+			return true
+		}
+	}
+	return false
 }
