@@ -174,3 +174,10 @@ func ArrayAny[T any](array []T, fn func(T) bool) bool {
 	}
 	return false
 }
+
+func ParseFileGrid(path string) [][]string {
+	lines := ReadFileLines(path)
+	return ArrayMap(lines, func(line string) []string {
+		return strings.Split(line, "")
+	})
+}
