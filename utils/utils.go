@@ -145,7 +145,7 @@ func CheckBounds[T any](y int, x int, grid [][]T) bool {
 	return IndexValid(grid, y) && IndexValid(grid[y], x)
 }
 
-func PrintGrid(grid [][]string) {
+func PrintGrid[T any](grid [][]T) {
 	for _, row := range grid {
 		for _, cell := range row {
 			print(cell)
@@ -180,4 +180,15 @@ func ParseFileGrid(path string) [][]string {
 	return ArrayMap(lines, func(line string) []string {
 		return strings.Split(line, "")
 	})
+}
+
+func ParseFileGridInt(path string) [][]int {
+	lines := ReadFileLines(path)
+	return ArrayMap(lines, func(line string) []int {
+		return ArrayMap(strings.Split(line, ""), StrToInt)
+	})
+}
+
+var DIRECTIONS = map[string][][2]int{
+	"CARDINAL": {{-1, 0}, {0, 1}, {1, 0}, {0, -1}},
 }
