@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"cmp"
 	"os"
 	"strconv"
 	"strings"
@@ -137,6 +138,40 @@ func ArraySum(array []int) int {
 	return sum
 }
 
+func ArrayMax[T any, K cmp.Ordered](array []T, fn func(item T) K) K {
+	maxSet := false
+	var max K
+	for _, item := range array {
+		val := fn(item)
+		if !maxSet {
+			max = val
+			maxSet = true
+		}
+
+		if maxSet && val > max {
+			max = val
+		}
+	}
+	return max
+}
+
+func ArrayMin[T any, K cmp.Ordered](array []T, fn func(item T) K) K {
+	minSet := false
+	var min K
+	for _, item := range array {
+		val := fn(item)
+		if !minSet {
+			min = val
+			minSet = true
+		}
+
+		if minSet && val < min {
+			min = val
+		}
+	}
+	return min
+}
+
 func IndexValid[T any](array []T, i int) bool {
 	return i >= 0 && i < len(array)
 }
@@ -191,4 +226,22 @@ func ParseFileGridInt(path string) [][]int {
 
 var DIRECTIONS = map[string][][2]int{
 	"CARDINAL": {{-1, 0}, {0, 1}, {1, 0}, {0, -1}},
+}
+
+var DIRECTIONS2 = map[string][]Point{
+	"CARDINAL": {{-1, 0}, {0, 1}, {1, 0}, {0, -1}},
+}
+
+type Point struct {
+	Y int
+	X int
+}
+
+func GridGetNeighbours[T any](grid [][]T, origin Point, directions []Point) []Point {
+	neighbours := ArrayMap(directions, func(point Point) Point {
+		return Point{X: origin.X + point.X, Y: origin.Y + point.Y}
+	})
+	return ArrayFilter(neighbours, func(point Point) bool {
+		return CheckBounds(point.Y, point.X, grid)
+	})
 }
