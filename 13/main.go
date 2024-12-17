@@ -32,7 +32,7 @@ func main() {
 }
 
 func partOne() {
-	machines := parseInput("input")
+	machines := parseInput("input", 0)
 	total := 0
 	for _, machine := range machines {
 		solved, a, b := solveMachine(machine)
@@ -44,7 +44,7 @@ func partOne() {
 }
 
 func partTwo() {
-	machines := parseInput2("input")
+	machines := parseInput("input", 10000000000000)
 	total := 0
 	for _, machine := range machines {
 		solved, aPresses, bPresses := solveMachine2(machine)
@@ -103,7 +103,7 @@ func solveMachine2(machine Machine) (bool, int, int) {
 
 }
 
-func parseInput(path string) []Machine {
+func parseInput(path string, add int) []Machine {
 	data := utils.ReadFile(path)
 	lines := strings.Split(data, "\n")
 
@@ -123,39 +123,7 @@ func parseInput(path string) []Machine {
 		btnBPoint := utils.Point{X: toInt(btnBLine[1]), Y: toInt(btnBLine[2])}
 
 		prizeLine := r2.FindStringSubmatch(machine[2])
-		prizePoint := utils.Point{X: utils.StrToInt(prizeLine[1]), Y: utils.StrToInt(prizeLine[2])}
-
-		m = append(m, Machine{
-			a:     btnAPoint,
-			b:     btnBPoint,
-			prize: prizePoint,
-		})
-	}
-
-	return m
-}
-
-func parseInput2(path string) []Machine {
-	data := utils.ReadFile(path)
-	lines := strings.Split(data, "\n")
-
-	machines := utils.ArraySplit(lines, func(s string) bool {
-		return s == ""
-	})
-
-	r, _ := regexp.Compile(`X([+-]\d+), Y([+-]\d+)`)
-	r2, _ := regexp.Compile(`X=(\d+), Y=(\d+)`)
-	m := []Machine{}
-	for _, machine := range machines {
-
-		btnALine := r.FindStringSubmatch(machine[0])
-		btnAPoint := utils.Point{X: toInt(btnALine[1]), Y: toInt(btnALine[2])}
-
-		btnBLine := r.FindStringSubmatch(machine[1])
-		btnBPoint := utils.Point{X: toInt(btnBLine[1]), Y: toInt(btnBLine[2])}
-
-		prizeLine := r2.FindStringSubmatch(machine[2])
-		prizePoint := utils.Point{X: utils.StrToInt(prizeLine[1]) + 10000000000000, Y: utils.StrToInt(prizeLine[2]) + 10000000000000}
+		prizePoint := utils.Point{X: utils.StrToInt(prizeLine[1]) + add, Y: utils.StrToInt(prizeLine[2]) + add}
 
 		m = append(m, Machine{
 			a:     btnAPoint,
