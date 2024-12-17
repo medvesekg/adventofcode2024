@@ -28,7 +28,7 @@ func (m Machine) String() string {
 
 func main() {
 	partOne()
-	//partTwo()
+	partTwo()
 }
 
 func partOne() {
@@ -47,8 +47,10 @@ func partTwo() {
 	machines := parseInput2("input")
 	total := 0
 	for _, machine := range machines {
-		solveMachine2(machine)
-		break
+		solved, aPresses, bPresses := solveMachine2(machine)
+		if solved {
+			total += 3*aPresses + bPresses
+		}
 	}
 	fmt.Println(total)
 }
@@ -77,12 +79,27 @@ func solveMachine(machine Machine) (bool, int, int) {
 	return false, 0, 0
 }
 
-func solveMachine2(machine Machine) {
-	div := machine.prize.X / machine.b.X
-	mul := machine.b.X * div
-	diff := machine.prize.X - mul
+func solveMachine2(machine Machine) (bool, int, int) {
+	/*
+		ax + by = c
+		dx + ey = f
+	*/
 
-	fmt.Println(diff)
+	a := machine.a.X
+	b := machine.b.X
+	c := machine.prize.X
+
+	d := machine.a.Y
+	e := machine.b.Y
+	f := machine.prize.Y
+
+	y := (f*a - c*d) / (e*a - b*d)
+	x := (c - b*y) / a
+
+	if a*x+b*y == c && d*x+e*y == f {
+		return true, x, y
+	}
+	return false, x, y
 
 }
 

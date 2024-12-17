@@ -245,3 +245,32 @@ func GridGetNeighbours[T any](grid [][]T, origin Point, directions []Point) []Po
 		return CheckBounds(point.Y, point.X, grid)
 	})
 }
+
+func Euclid(a int, b int) int {
+	for b != 0 {
+		a, b = b, a%b
+	}
+	return a
+}
+
+func ExtendedEuclid(a int, b int) (int, int, int) {
+	s1, s2 := 1, 0
+	t1, t2 := 0, 1
+	for b != 0 {
+		quotient, remainder := IntDiv(a, b)
+		a, b = b, remainder
+		s1, s2 = s2, s1-quotient*s2
+		t1, t2 = t2, t1-quotient*t2
+	}
+	return a, s1, t1
+}
+
+func IntDiv(a int, b int) (int, int) {
+	quotient := a / b
+	remainder := a % b
+	return quotient, remainder
+}
+
+func IsWholeNumber(num float64) bool {
+	return num == float64(int(num))
+}
