@@ -2,6 +2,7 @@ package utils
 
 import (
 	"cmp"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -273,4 +274,8 @@ func IntDiv(a int, b int) (int, int) {
 
 func IsWholeNumber(num float64) bool {
 	return num == float64(int(num))
+}
+
+func (p Point) String() string {
+	return fmt.Sprintf("x: %d, y: %d", p.X, p.Y)
 }
