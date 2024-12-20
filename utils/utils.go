@@ -181,6 +181,17 @@ func CheckBounds[T any](y int, x int, grid [][]T) bool {
 	return IndexValid(grid, y) && IndexValid(grid[y], x)
 }
 
+func SprintGrid[T any](grid [][]T) string {
+	str := ""
+	for _, row := range grid {
+		for _, cell := range row {
+			str += fmt.Sprint(cell)
+		}
+		str += "\n"
+	}
+	return str
+}
+
 func PrintGrid[T any](grid [][]T) {
 	for _, row := range grid {
 		for _, cell := range row {
