@@ -279,3 +279,22 @@ func IsWholeNumber(num float64) bool {
 func (p Point) String() string {
 	return fmt.Sprintf("x: %d, y: %d", p.X, p.Y)
 }
+
+func ParseGrid(raw string) [][]string {
+	grid := [][]string{}
+	for _, line := range strings.Split(raw, "\n") {
+		grid = append(grid, strings.Split(line, ""))
+	}
+	return grid
+}
+
+func FindInGrid(grid [][]string, target string) Point {
+	for y, row := range grid {
+		for x, cell := range row {
+			if cell == target {
+				return Point{Y: y, X: x}
+			}
+		}
+	}
+	return Point{}
+}
