@@ -24,7 +24,28 @@ func partOne() {
 	target := utils.Point{X: size - 1, Y: size - 1}
 	shortest := shortestPath(grid, origin, target)
 	fmt.Println(shortest)
+}
 
+func partTwo() {
+	size := 71
+	startIteration := 1024
+	input := "input"
+
+	origin := utils.Point{X: 0, Y: 0}
+	target := utils.Point{X: size - 1, Y: size - 1}
+	incoming := parseInput(input)
+	grid := createGrid(size)
+	grid = fall(grid, incoming, startIteration)
+
+	for i := startIteration; i < len(incoming); i++ {
+		pos := incoming[i]
+		grid[pos[1]][pos[0]] = "#"
+		exists := pathExists(grid, origin, target)
+		if !exists {
+			fmt.Printf("%d,%d\n", pos[0], pos[1])
+			return
+		}
+	}
 }
 
 func parseInput(path string) [][]int {
@@ -92,6 +113,39 @@ func shortestPath(grid [][]string, origin, target utils.Point) int {
 	})
 }
 
+func pathExists(grid [][]string, origin, target utils.Point) bool {
+
+	frontier := [][]utils.Point{{origin}}
+	visited := make(map[utils.Point]int, len(grid)*len(grid))
+	visited[origin] = 0
+
+	for len(frontier) > 0 {
+		index := getClosestIndex(frontier, target)
+		currentPath := frontier[index]
+		frontier = append(frontier[:index], frontier[index+1:]...)
+		currentPoint := currentPath[len(currentPath)-1]
+
+		if currentPoint == target {
+			return true
+		}
+
+		neighbours := utils.GridGetNeighbours(grid, currentPoint, utils.DIRECTIONS2["CARDINAL"])
+		for _, neigbour := range neighbours {
+			vistiedLength, hasVisited := visited[neigbour]
+
+			if grid[neigbour.Y][neigbour.X] == "#" || (hasVisited && len(currentPath)+1 > vistiedLength) {
+				continue
+			}
+			visited[neigbour] = len(currentPath)
+			newPath := []utils.Point{}
+			newPath = append(newPath, currentPath...)
+			frontier = append(frontier, append(newPath, neigbour))
+		}
+	}
+
+	return false
+}
+
 func visualizeSearch(grid [][]string, path []utils.Point) {
 	newGrid := make([][]string, len(grid))
 	for i := 0; i < len(grid); i++ {
@@ -123,7 +177,4 @@ func getClosestIndex(paths [][]utils.Point, target utils.Point) int {
 		}
 	}
 	return closestIndex
-}
-
-func partTwo() {
 }
