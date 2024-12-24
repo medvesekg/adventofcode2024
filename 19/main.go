@@ -8,6 +8,11 @@ import (
 )
 
 func main() {
+	partOne()
+	partTwo()
+}
+
+func partOne() {
 	towels, patterns := parseInput("input")
 
 	countPossible := 0
@@ -49,4 +54,37 @@ func isPossible(towels []string, pattern string) bool {
 	}
 	cache[pattern] = false
 	return false
+}
+
+var cache2 = make(map[string]int)
+
+func countPossibilities(towels []string, pattern string) int {
+	count := 0
+
+	cachedResult, cacheExists := cache2[pattern]
+	if cacheExists {
+		return cachedResult
+	}
+
+	if pattern == "" {
+		return 1
+	}
+
+	for _, towel := range towels {
+		if strings.HasPrefix(pattern, towel) {
+			count += countPossibilities(towels, strings.TrimPrefix(pattern, towel))
+		}
+	}
+	cache2[pattern] = count
+	return count
+}
+
+func partTwo() {
+	towels, patterns := parseInput("input")
+
+	possibilities := 0
+	for _, pattern := range patterns {
+		possibilities += countPossibilities(towels, pattern)
+	}
+	fmt.Println(possibilities)
 }
