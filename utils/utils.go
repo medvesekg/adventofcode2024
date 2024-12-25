@@ -309,3 +309,12 @@ func FindInGrid(grid [][]string, target string) Point {
 	}
 	return Point{}
 }
+
+func ArrayContains[T comparable](array []T, searchFor T) bool {
+	for _, item := range array {
+		if item == searchFor {
+			return true
+		}
+	}
+	return false
+}
