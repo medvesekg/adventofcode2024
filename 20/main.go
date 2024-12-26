@@ -3,9 +3,19 @@ package main
 import (
 	"adventofcode/utils"
 	"fmt"
+	"math"
 )
 
 func main() {
+	partOne()
+	partTwo()
+}
+
+func computeDistance(a utils.Point, b utils.Point) int {
+	return int(math.Abs(math.Abs(float64(b.X)-float64(a.X)) + math.Abs(float64(b.Y)-float64(a.Y))))
+}
+
+func partOne() {
 	grid := utils.ParseFileGrid("input")
 	origin := utils.FindInGrid(grid, "S")
 	target := utils.FindInGrid(grid, "E")
@@ -43,7 +53,6 @@ func main() {
 	}
 
 	fmt.Println(result)
-
 }
 
 func findPath(grid [][]string, origin utils.Point, target utils.Point) []utils.Point {
@@ -84,4 +93,44 @@ func visualizePath(grid [][]string, path []utils.Point) {
 		}
 		fmt.Println()
 	}
+}
+
+func partTwo() {
+	grid := utils.ParseFileGrid("input")
+	origin := utils.FindInGrid(grid, "S")
+	target := utils.FindInGrid(grid, "E")
+	path := findPath(grid, origin, target)
+
+	maxCheatDistance := 20
+	minTimeSaved := 100
+
+	count := 0
+	cheatTimes := map[int]int{}
+	for i := 0; i < len(path); i++ {
+		point := path[i]
+		for j := i + 3; j < len(path); j++ {
+			jumpToPoint := path[j]
+			distance := computeDistance(point, jumpToPoint)
+			timeSaved := j - i - distance
+			if distance <= maxCheatDistance && timeSaved >= minTimeSaved {
+
+				count++
+				cheatTimes[timeSaved]++
+			}
+		}
+	}
+
+	/*
+		keys := []int{}
+		for timeSaved := range cheatTimes {
+			keys = append(keys, timeSaved)
+		}
+		sort.Ints(keys)
+
+		for _, timeSaved := range keys {
+			fmt.Println(timeSaved, cheatTimes[timeSaved])
+		}
+	*/
+
+	fmt.Println(count)
 }
