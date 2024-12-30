@@ -22,7 +22,7 @@ var remote = [][]string{
 
 func main() {
 	partOne()
-
+	partTwo()
 }
 
 func partOne() {
@@ -33,7 +33,21 @@ func partOne() {
 	for _, code := range codes {
 		splitCode := strings.Split(code, "")
 		codeValue := utils.StrToInt(r.FindString(code))
-		result += len(computeInput(splitCode, 2)) * codeValue
+		result += computeInput(splitCode, 2) * codeValue
+	}
+
+	fmt.Println(result)
+}
+
+func partTwo() {
+	codes := parseInput("input")
+	r, _ := regexp.Compile(`\d+`)
+
+	result := 0
+	for _, code := range codes {
+		splitCode := strings.Split(code, "")
+		codeValue := utils.StrToInt(r.FindString(code))
+		result += computeInput(splitCode, 25) * codeValue
 	}
 
 	fmt.Println(result)
@@ -83,20 +97,6 @@ func findIndex(array []string, item string) int {
 	return -1
 }
 
-func findShortest(codes [][]string) []string {
-	shortest := []string{}
-	shortestLength := 9999999
-
-	for _, code := range codes {
-		if len(code) < shortestLength {
-			shortestLength = len(code)
-			shortest = code
-		}
-	}
-
-	return shortest
-}
-
 func checkPresses(presses []string, currentPosition utils.Point, forbidden utils.Point) bool {
 	for _, press := range presses {
 		switch press {
@@ -116,25 +116,27 @@ func checkPresses(presses []string, currentPosition utils.Point, forbidden utils
 	return true
 }
 
-func computeInput(code []string, depth int) []string {
-	finalCode := []string{}
+func computeInput(code []string, depth int) int {
+	finalCode := 0
 	currentPosition := utils.FindInGrid(keypad, "A")
 	for _, char := range code {
 		target := utils.FindInGrid(keypad, char)
-		codes := [][]string{}
+		shortest := math.MaxInt64
 		for _, possiblity := range findWays(currentPosition, target, keypad) {
-			codes = append(codes, computeInputRemote(possiblity, depth))
+			length := computeInputRemote(possiblity, depth)
+			if length < shortest {
+				shortest = length
+			}
 		}
-
-		finalCode = append(finalCode, findShortest(codes)...)
+		finalCode += shortest
 		currentPosition = target
 	}
 	return finalCode
 }
 
-var memo = map[string][]string{}
+var memo = map[string]int{}
 
-func computeInputRemote(code []string, depth int) []string {
+func computeInputRemote(code []string, depth int) int {
 	memoKey := fmt.Sprintf("%d-%s", depth, strings.Join(code, ""))
 
 	result, exists := memo[memoKey]
@@ -143,17 +145,20 @@ func computeInputRemote(code []string, depth int) []string {
 	}
 
 	if depth == 0 {
-		return code
+		return len(code)
 	}
-	finalCode := []string{}
+	finalCode := 0
 	currentPosition := utils.FindInGrid(remote, "A")
 	for _, char := range code {
 		target := utils.FindInGrid(remote, char)
-		codes := [][]string{}
-		for _, possiblity := range findWays(currentPosition, target, keypad) {
-			codes = append(codes, computeInputRemote(possiblity, depth-1))
+		shortest := math.MaxInt64
+		for _, possiblity := range findWays(currentPosition, target, remote) {
+			length := computeInputRemote(possiblity, depth-1)
+			if length < shortest {
+				shortest = length
+			}
 		}
-		finalCode = append(finalCode, findShortest(codes)...)
+		finalCode += shortest
 		currentPosition = target
 	}
 
