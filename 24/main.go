@@ -16,10 +16,86 @@ type Instruction struct {
 }
 
 func main() {
+	partOne()
+	partTwo()
+}
+
+func partOne() {
 	state, instructions := parseInput("input")
 	state = run(state, instructions)
 	output := readOutput(state)
 	fmt.Println(output)
+}
+
+func partTwo() {
+	_, instructions := parseInput("input")
+	highest := 44
+	carryWire := "hmc"
+	for i := 1; i <= highest; i++ {
+		carryWire = checkAdder(carryWire, i, instructions)
+	}
+}
+
+func checkAdder(carryWire string, i int, instructions []Instruction) string {
+	xWire := wire(i, "x")
+	yWire := wire(i, "y")
+	zWire := wire(i, "z")
+
+	firstXorExists, firstXor := findInstruction("XOR", xWire, yWire, instructions)
+	if !firstXorExists {
+		fmt.Printf("Expected %s XOR %s\n", xWire, yWire)
+		panic("Something went wrong")
+	}
+
+	secondXorExists, secondXor := findInstruction("XOR", firstXor.out, carryWire, instructions)
+	if !secondXorExists || secondXor.out != zWire {
+		fmt.Printf("Expected %s XOR %s -> %s\n", firstXor.out, carryWire, zWire)
+		panic("Something went wrong")
+	}
+
+	firstAndExists, firstAnd := findInstruction("AND", xWire, yWire, instructions)
+	if !firstAndExists {
+		fmt.Printf("Expected %s AND %s\n", xWire, yWire)
+		panic("Something went wrong")
+	}
+
+	secondAndExists, secondAnd := findInstruction("AND", firstXor.out, carryWire, instructions)
+	if !secondAndExists {
+		fmt.Printf("Expected %s AND %s\n", firstXor.out, carryWire)
+		panic("Something went wrong")
+
+	}
+
+	firstOrExists, firstOr := findInstruction("OR", firstAnd.out, secondAnd.out, instructions)
+	if !firstOrExists {
+		fmt.Printf("Expected %s OR %s\n", firstAnd.out, secondAnd.out)
+		panic("Something went wrong")
+	}
+
+	return firstOr.out
+}
+
+func findHighest(state map[string]int) int {
+	highest := 0
+	r, _ := regexp.Compile(`x(\d+)`)
+	for wire := range state {
+		match := r.FindStringSubmatch(wire)
+		if len(match) > 1 {
+			num := utils.StrToInt(match[1])
+			if num > highest {
+				highest = num
+			}
+		}
+	}
+	return highest
+}
+func findInstruction(op string, in1 string, in2 string, instructions []Instruction) (bool, Instruction) {
+	for _, instruction := range instructions {
+		if instruction.op == op && ((instruction.in1 == in1 && instruction.in2 == in2) || (instruction.in1 == in2) && instruction.in2 == in1) {
+			return true, instruction
+		}
+	}
+	return false, Instruction{}
 }
 
 func run(initialState map[string]int, instructions []Instruction) map[string]int {
@@ -131,4 +207,8 @@ func readOutput(state map[string]int) int {
 
 func z(i int) string {
 	return fmt.Sprintf("z%02d", i)
+}
+
+func wire(i int, letter string) string {
+	return fmt.Sprintf("%s%02d", letter, i)
 }
